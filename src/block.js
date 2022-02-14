@@ -44,7 +44,7 @@ class Block {
       // Recalculate the hash of the Block
       // Comparing if the hashes changed
       // Returning the Block is not valid
-      const hash2 = SHA256(JSON.stringify(self)).toString('hex');
+      const hash2 = SHA256(JSON.stringify(self)).toString();
       this.hash = hash
 
       // Returning the Block is valid
