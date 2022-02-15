@@ -63,6 +63,8 @@ class Blockchain {
    */
   _addBlock(block) {
     return new Promise(async (resolve, reject) => {
+      const chainErrors = await this.validateChain();
+      if (chainErrors.length > 0) reject(chainErrors);
       // 构建区块
       block.height = this.height + 1;
       if (this.height !== -1) { block.previousBlockHash = this.chain[this.height].hash }
@@ -184,15 +186,15 @@ class Blockchain {
   validateChain() {
     let errorLog = [];
     return new Promise(async (resolve, reject) => {
-      this.chain.forEach((block, i) => {
-        if (!block.validate()) {
+      this.chain.forEach(async (block, i) => {
+        if (!(await block.validate())) {
           errorLog.push(`#${i - 1} block validate failed!`)
         }
-        if (i > 0 && block[i].previousBlockHash !== block[i - 1]) {
+        if (i > 0 && this.chain[i - 1].hash !== block.previousBlockHash) {
           errorLog.push(`#${i - 1} block's previous block hash occur a mismatch!`)
         }
-        resolve(errorLog)
       });
+      resolve(errorLog)
     });
   }
 
